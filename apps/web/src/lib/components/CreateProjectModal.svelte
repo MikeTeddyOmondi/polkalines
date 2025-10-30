@@ -51,23 +51,25 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if show}
+	<!-- svelte-ignore a11y_interactive_supports_focus -->
 	<div
-		class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-sm"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-transparent modal-backdrop backdrop-blur-sm"
 		on:click={handleBackdropClick}
 		on:keydown={handleKeydown}
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby="modal-title"
 	>
-		<div class="mx-4 w-full max-w-md rounded-lg bg-white p-6">
-			<div class="mb-4 flex items-center justify-between">
+		<div class="w-full max-w-md p-6 mx-4 bg-white rounded-lg">
+			<div class="flex items-center justify-between mb-4">
 				<h2 class="text-xl font-semibold">Create New Project</h2>
+				<!-- svelte-ignore a11y_consider_explicit_label -->
 				<button
 					type="button"
-					class="cursor-pointer text-gray-400 hover:text-gray-600"
+					class="text-gray-400 cursor-pointer hover:text-gray-600"
 					on:click={handleClose}
 				>
-					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -86,7 +88,7 @@
 						name="name"
 						id="name"
 						required
-						class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+						class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
 						placeholder="My Awesome Project"
 					/>
 				</div>
@@ -99,7 +101,7 @@
 						name="repoUrl"
 						id="repoUrl"
 						required
-						class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+						class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
 						placeholder="https://github.com/username/repo"
 					/>
 				</div>
@@ -110,7 +112,7 @@
 						name="type"
 						id="type"
 						required
-						class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+						class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
 					>
 						<option value="">Select Type</option>
 						<option value="ink-contract">ink! Contract</option>
@@ -125,7 +127,7 @@
 					<select
 						name="framework"
 						id="framework"
-						class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+						class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
 					>
 						<option value="">Select Framework</option>
 						<option value="vite">Vite</option>
@@ -134,17 +136,17 @@
 					</select>
 				</div>
 
-				<div class="mt-6 flex justify-end space-x-3">
+				<div class="flex justify-end mt-6 space-x-3">
 					<button
 						type="button"
-						class="cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+						class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
 						on:click={handleClose}
 					>
 						Cancel
 					</button>
 					<button
 						type="submit"
-						class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+						class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md cursor-pointer hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 					>
 						Create
 					</button>

@@ -1,0 +1,11 @@
+### GET
+GET http://localhost:3000/healthz
+
+### GET /api/data
+GET http://localhost:3000/api/data
+Accept: application/json
+
+### GET /
+GET http://localhost:3000/
+
+### ______________________________

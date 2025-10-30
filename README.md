@@ -184,6 +184,7 @@ redis-server
 ```bash
 # Terminal 1: API Server
 cd apps/api
+chmod +x dev.sh
 pnpm dev
 
 # Terminal 2: Web UI

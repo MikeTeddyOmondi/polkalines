@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsx ./src/index.ts",
+    "dev": "./dev.sh",
     "db:migrations": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },

@@ -7,7 +7,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsdown",
-    "dev": "tsdown --watch",
+    "dev": "tsdown --watch ./src --ignore-watch ./dist --ignore-watch ./.turbo",
     "lint": "eslint src --ext .ts",
     "clean": "rm -rf dist",
     "format": "prettier --write \"src/**/*.ts\""

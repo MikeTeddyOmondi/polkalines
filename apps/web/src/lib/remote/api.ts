@@ -11,7 +11,7 @@ export interface Project {
 }
 
 export interface Pipeline {
-	id: string;
+	pipelineId: string;
 	projectId: string;
 	status: 'pending' | 'running' | 'success' | 'failed';
 	jobId?: string;

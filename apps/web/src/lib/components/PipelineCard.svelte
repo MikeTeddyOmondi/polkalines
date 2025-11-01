@@ -10,20 +10,31 @@
 
 	let { pipeline, project }: PipelineCardProps = $props();
 
-	let logs: string[] = $state([]);
+	// Create a local state copy that can be updated
+	let currentPipeline = $state<Pipeline>(pipeline);
+	let logs = $state<string[]>([]);
 	let intervalId: NodeJS.Timeout;
+
+	// Sync when pipeline prop changes
+	$effect(() => {
+		currentPipeline = pipeline;
+	});
 
 	async function updateStatus() {
 		try {
+			// Use the original pipeline.pipelineId which never changes
 			const updatedPipeline = await getPipelineStatus(pipeline.pipelineId);
-			pipeline = updatedPipeline;
-			console.log({ pipeline, updatedPipeline });
+			
+			// Update the local state copy
+			currentPipeline = updatedPipeline;
+			
+			console.log({ originalPipeline: pipeline, updatedPipeline, currentPipeline });
 
-			console.log({ updatedPipeline });
-			const logsResponse = await getPipelineLogs(pipeline.id);
-			logs.push(logsResponse.logs);
+			// Use the updated pipeline's id for logs
+			const logsResponse = await getPipelineLogs(updatedPipeline.id);
+			logs = [...logs, logsResponse.logs];
 
-			if (pipeline.status === 'success' || pipeline.status === 'failed') {
+			if (updatedPipeline.status === 'success' || updatedPipeline.status === 'failed') {
 				clearInterval(intervalId);
 			}
 		} catch (error) {
@@ -37,7 +48,7 @@
 			running: 'bg-blue-100 text-blue-800',
 			success: 'bg-green-100 text-green-800',
 			failed: 'bg-red-100 text-red-800'
-		}[pipeline.status]
+		}[currentPipeline.status]
 	);
 
 	// Poll for updates every 2 seconds
@@ -52,17 +63,17 @@
 	<div class="flex items-center justify-between mb-4">
 		<div>
 			<h3 class="text-lg font-semibold">{project.name}</h3>
-			<p class="text-sm text-gray-500">Pipeline ID: {pipeline.id}</p>
+			<p class="text-sm text-gray-500">Pipeline ID: {currentPipeline.id}</p>
 		</div>
 		<span class="rounded-full px-3 py-1 text-sm font-medium {statusColor}">
-			{pipeline.status}
+			{currentPipeline.status}
 		</span>
 	</div>
 
-	{#if logs}
+	{#if logs.length > 0}
 		<div class="mt-4">
 			<h4 class="mb-2 font-medium">Logs</h4>
-			<pre class="p-4 overflow-x-auto font-mono text-sm rounded bg-gray-50">{logs}</pre>
+			<pre class="p-4 overflow-auto font-mono text-sm rounded bg-gray-50 max-h-[50vh]">{logs.join('\n')}</pre>
 		</div>
 	{/if}
 </div>

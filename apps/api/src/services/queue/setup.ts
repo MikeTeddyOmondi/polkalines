@@ -1,6 +1,7 @@
 import { Queue } from "groupmq";
 import { Redis } from "ioredis";
 import { config } from "dotenv";
+import { queueLogger } from "../../utils/logger.js";
 
 config();
 
@@ -21,7 +22,7 @@ export const gitQueue = new Queue({
   redis,
   namespace: "polka-git",
   jobTimeoutMs: 120_000, // 2 minutes
-  logger: true,
+  logger: queueLogger,
   keepCompleted: 10,
   keepFailed: 20,
 });
@@ -31,7 +32,7 @@ export const buildQueue = new Queue({
   redis,
   namespace: "polka-build",
   jobTimeoutMs: 600_000, // 10 minutes
-  logger: true,
+  logger: queueLogger,
   keepCompleted: 10,
   keepFailed: 20,
 });
@@ -41,7 +42,7 @@ export const testQueue = new Queue({
   redis,
   namespace: "polka-test",
   jobTimeoutMs: 300_000, // 5 minutes
-  logger: true,
+  logger: queueLogger,
   keepCompleted: 10,
   keepFailed: 20,
 });
@@ -51,7 +52,7 @@ export const deployQueue = new Queue({
   redis,
   namespace: "polka-deploy",
   jobTimeoutMs: 180_000, // 3 minutes
-  logger: true,
+  logger: queueLogger,
   keepCompleted: 10,
   keepFailed: 20,
 });

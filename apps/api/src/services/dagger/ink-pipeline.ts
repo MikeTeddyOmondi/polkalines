@@ -1,4 +1,5 @@
-import { connect, Client } from "@dagger.io/dagger";
+import { Client, Container } from "@dagger.io/dagger";
+import { applogger as log } from "../../utils/logger.js";
 
 /**
  * Build an ink! smart contract using Dagger
@@ -9,7 +10,7 @@ export async function buildInkContract(
   branch: string,
   contractPath: string = "."
 ) {
-  console.log("[Dagger] Building ink! contract...");
+  log.info("[Dagger] Building ink! contract...");
 
   // Get Git repository
   const repo = client.git(repoUrl).branch(branch).tree();
@@ -28,7 +29,7 @@ export async function buildInkContract(
   const artifactsDir = built.directory("./target/ink");
   const entries = await artifactsDir.entries();
 
-  console.log("[Dagger] Build artifacts:", entries);
+  log.info(`[Dagger] Build artifacts: ${entries}`);
 
   return {
     container: built,
@@ -47,7 +48,7 @@ export async function testInkContract(
   branch: string,
   contractPath: string = "."
 ) {
-  console.log("[Dagger] Testing ink! contract...");
+  log.info("[Dagger] Testing ink! contract...");
 
   const repo = client.git(repoUrl).branch(branch).tree();
 
@@ -80,7 +81,7 @@ export async function buildViteDapp(
   branch: string,
   buildDir: string = "."
 ) {
-  console.log("[Dagger] Building Vite dApp...");
+  log.info("[Dagger] Building Vite dApp...");
 
   const repo = client.git(repoUrl).branch(branch).tree();
 
@@ -110,7 +111,7 @@ export async function buildNextDapp(
   branch: string,
   buildDir: string = "."
 ) {
-  console.log("[Dagger] Building Next.js dApp...");
+  log.info("[Dagger] Building Next.js dApp...");
 
   const repo = client.git(repoUrl).branch(branch).tree();
 
@@ -140,7 +141,7 @@ export async function buildSvelteDapp(
   branch: string,
   buildDir: string = "."
 ) {
-  console.log("[Dagger] Building Svelte dApp...");
+  log.info("[Dagger] Building Svelte dApp...");
 
   const repo = client.git(repoUrl).branch(branch).tree();
 
@@ -164,7 +165,10 @@ export async function buildSvelteDapp(
 /**
  * Export build artifacts to local directory
  */
-export async function exportArtifacts(dir: any, outputPath: string) {
-  await dir.export(outputPath);
-  console.log(`[Dagger] Exported artifacts to ${outputPath}`);
+export async function exportArtifacts(
+  container: Container,
+  outputPath: string
+) {
+  await container.export(outputPath);
+  log.info(`[Dagger] Exported artifacts to ${outputPath}`);
 }

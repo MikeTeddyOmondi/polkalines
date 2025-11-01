@@ -4,11 +4,13 @@ import { db } from "../db/client.js";
 import { pipelines, projects } from "../db/schema.js";
 import { gitQueue } from "../services/queue/setup.js";
 import { eq } from "drizzle-orm";
+import { applogger as log } from "../utils/logger.js";
+import { createError } from "../utils/error.js";
 
 const router: Router = express.Router();
 
 // Create new pipeline run
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   const { projectId, type } = req.body;
 
   try {
@@ -42,19 +44,22 @@ router.post("/", async (req, res) => {
       },
     });
 
+    // Update job id
+    await db.update(pipelines).set({ jobId: job.id });
+
     res.json({
       pipelineId,
       jobId: job.id,
       status: "pending",
     });
-  } catch (error) {
-    console.error("Error creating pipeline:", error);
-    res.status(500).json({ error: "Failed to create pipeline" });
+  } catch (error: any) {
+    log.error(`Error creating pipeline: ${error.message}`);
+    next(createError(500, `Failed to create pipeline ${error.message}`));
   }
 });
 
 // Get pipeline status
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const pipeline = await db.query.pipelines.findFirst({
       where: eq(pipelines.id, req.params.id),
@@ -65,14 +70,14 @@ router.get("/:id", async (req, res) => {
     }
 
     res.json(pipeline);
-  } catch (error) {
-    console.error("Error fetching pipeline:", error);
-    res.status(500).json({ error: "Failed to fetch pipeline" });
+  } catch (error: any) {
+    log.error(`Error fetching pipeline: ${error.message}`);
+    next(createError(500, `Failed to fetch pipeline: ${error.message}`));
   }
 });
 
 // Get pipeline logs
-router.get("/:id/logs", async (req, res) => {
+router.get("/:id/logs", async (req, res, next) => {
   try {
     const pipeline = await db.query.pipelines.findFirst({
       where: eq(pipelines.id, req.params.id),
@@ -85,14 +90,14 @@ router.get("/:id/logs", async (req, res) => {
     res.json({
       logs: pipeline.logs || "",
     });
-  } catch (error) {
-    console.error("Error fetching pipeline logs:", error);
-    res.status(500).json({ error: "Failed to fetch pipeline logs" });
+  } catch (error: any) {
+    log.error(`Error fetching pipeline logs: ${error.message}`);
+    next(createError(500, `Failed to fetch pipeline logs: ${error.message}`));
   }
 });
 
 // Cancel pipeline
-router.post("/:id/cancel", async (req, res) => {
+router.post("/:id/cancel", async (req, res, next) => {
   try {
     const pipeline = await db.query.pipelines.findFirst({
       where: eq(pipelines.id, req.params.id),
@@ -116,9 +121,9 @@ router.post("/:id/cancel", async (req, res) => {
       .where(eq(pipelines.id, req.params.id));
 
     res.json({ message: "Pipeline cancelled successfully" });
-  } catch (error) {
-    console.error("Error cancelling pipeline:", error);
-    res.status(500).json({ error: "Failed to cancel pipeline" });
+  } catch (error: any) {
+    log.error(`Error cancelling pipeline: ${error.message}`);
+    next(createError(500, `Failed to cancel pipeline: ${error.message}`));
   }
 });
 

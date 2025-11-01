@@ -6,6 +6,7 @@ export interface Project {
 	repoUrl: string;
 	type: 'ink-contract' | 'dapp';
 	framework?: string;
+	branch?: string;
 	createdAt: string;
 	updatedAt: string;
 }

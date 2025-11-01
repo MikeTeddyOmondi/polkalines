@@ -7,6 +7,7 @@ export const projects = sqliteTable("projects", {
   repoUrl: text("repo_url").notNull(),
   type: text("type").notNull(), // 'ink-contract' | 'dapp'
   framework: text("framework"), // 'vite' | 'nextjs' | 'svelte' | 'sveltekit'
+  branch: text("branch").default("main"), // 'main' | 'master'
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),

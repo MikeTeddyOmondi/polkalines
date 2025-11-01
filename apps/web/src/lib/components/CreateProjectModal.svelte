@@ -1,17 +1,19 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import type { Project } from '$lib/remote/api';
 
-	export let show = false;
-
-	const dispatch = createEventDispatcher<{
-		close: void;
-		submit: { project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'> };
-	}>();
+	let {
+		show = $bindable(false),
+		onclose,
+		onsubmit
+	}: {
+		show?: boolean;
+		onclose?: () => void;
+		onsubmit?: (event: { project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'> }) => void;
+	} = $props();
 
 	function handleClose() {
 		show = false;
-		dispatch('close');
+		onclose?.();
 	}
 
 	function handleSubmit(event: SubmitEvent) {
@@ -19,12 +21,13 @@
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
 
-		dispatch('submit', {
+		onsubmit?.({
 			project: {
 				name: formData.get('name') as string,
 				repoUrl: formData.get('repoUrl') as string,
 				type: formData.get('type') as 'ink-contract' | 'dapp',
-				framework: formData.get('framework') as string
+				framework: formData.get('framework') as string,
+				branch: formData.get('repoBranch') as string
 			}
 		});
 
@@ -48,14 +51,14 @@
 	}
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 {#if show}
 	<!-- svelte-ignore a11y_interactive_supports_focus -->
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-transparent modal-backdrop backdrop-blur-sm"
-		on:click={handleBackdropClick}
-		on:keydown={handleKeydown}
+		onclick={handleBackdropClick}
+		onkeydown={handleKeydown}
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby="modal-title"
@@ -67,7 +70,7 @@
 				<button
 					type="button"
 					class="text-gray-400 cursor-pointer hover:text-gray-600"
-					on:click={handleClose}
+					onclick={handleClose}
 				>
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
@@ -80,7 +83,7 @@
 				</button>
 			</div>
 
-			<form on:submit={handleSubmit} class="space-y-4">
+			<form onsubmit={handleSubmit} class="space-y-4">
 				<div>
 					<label for="name" class="block text-sm font-medium text-gray-700">Project Name</label>
 					<input
@@ -103,6 +106,19 @@
 						required
 						class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
 						placeholder="https://github.com/username/repo"
+					/>
+				</div>
+
+				<div>
+					<label for="repoBranch" class="block text-sm font-medium text-gray-700">Repository Branch</label
+					>
+					<input
+						type="text"
+						name="repoBranch"
+						id="repoBranch"
+						required
+						class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+						placeholder="main"
 					/>
 				</div>
 
@@ -140,7 +156,7 @@
 					<button
 						type="button"
 						class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md cursor-pointer hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-						on:click={handleClose}
+						onclick={handleClose}
 					>
 						Cancel
 					</button>

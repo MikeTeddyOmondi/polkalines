@@ -3,21 +3,25 @@
 	import type { Project, Pipeline } from '$lib/remote/api';
 	import { getPipelineStatus, getPipelineLogs } from '$lib/remote/api';
 
-	export let pipeline: Pipeline;
-	export let project: Project;
+	interface PipelineCardProps {
+		pipeline: Pipeline;
+		project: Project;
+	}
 
-	let logs = '';
+	let { pipeline, project }: PipelineCardProps = $props();
+
+	let logs: string[] = $state([]);
 	let intervalId: NodeJS.Timeout;
 
 	async function updateStatus() {
 		try {
-      console.log({ pipeline });
 			const updatedPipeline = await getPipelineStatus(pipeline.pipelineId);
 			pipeline = updatedPipeline;
+			console.log({ pipeline, updatedPipeline });
 
-			console.log({ pipeline });
+			console.log({ updatedPipeline });
 			const logsResponse = await getPipelineLogs(pipeline.id);
-			logs = logsResponse.logs;
+			logs.push(logsResponse.logs);
 
 			if (pipeline.status === 'success' || pipeline.status === 'failed') {
 				clearInterval(intervalId);
@@ -27,12 +31,14 @@
 		}
 	}
 
-	$: statusColor = {
-		pending: 'bg-yellow-100 text-yellow-800',
-		running: 'bg-blue-100 text-blue-800',
-		success: 'bg-green-100 text-green-800',
-		failed: 'bg-red-100 text-red-800'
-	}[pipeline.status];
+	let statusColor = $derived(
+		{
+			pending: 'bg-yellow-100 text-yellow-800',
+			running: 'bg-blue-100 text-blue-800',
+			success: 'bg-green-100 text-green-800',
+			failed: 'bg-red-100 text-red-800'
+		}[pipeline.status]
+	);
 
 	// Poll for updates every 2 seconds
 	intervalId = setInterval(updateStatus, 2000);
@@ -46,7 +52,7 @@
 	<div class="flex items-center justify-between mb-4">
 		<div>
 			<h3 class="text-lg font-semibold">{project.name}</h3>
-			<p class="text-sm text-gray-500">Pipeline ID: {pipeline.pipelineId}</p>
+			<p class="text-sm text-gray-500">Pipeline ID: {pipeline.id}</p>
 		</div>
 		<span class="rounded-full px-3 py-1 text-sm font-medium {statusColor}">
 			{pipeline.status}

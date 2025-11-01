@@ -1,11 +1,40 @@
 ### GET
-GET http://localhost:3000/healthz
-
-### GET /api/data
-GET http://localhost:3000/api/data
-Accept: application/json
+GET http://localhost:3001/healthz
 
 ### GET /
-GET http://localhost:3000/
+GET http://localhost:3001/
 
-### ______________________________
+### GET /api/projects
+GET http://localhost:3001/api/projects
+
+### Create Pipeline to Trigger 
+curl -X POST http://localhost:3001/api/pipelines \
+  -H "Content-Type: application/json" \
+  -d '{
+    "projectId": "UMBPLNtGLPhEKpzlmfs_D"
+  }'
+
+### GET /api/pipelines
+GET http://localhost:3001/api/pipelines/8gGrKfpa-g75tDbrP8JI5
+
+### Trigger Next.js Dapp Build
+curl -X POST http://localhost:3636/api/builds/trigger \
+  -H "Content-Type: application/json" \
+  -d '{
+    "projectId": "nextjs-project",
+    "repoUrl": "https://github.com/MikeTeddyOmondi/bun-next-app",
+    "branch": "main",
+    "framework": "nextjs"
+  }'
+
+### Trigger SvelteDapp Build
+curl -X POST http://localhost:3636/api/builds/trigger \
+  -H "Content-Type: application/json" \
+  -d '{
+    "projectId": "sveltekit-project",
+    "repoUrl": "https://github.com/sveltejs/kit",
+    "branch": "main",
+    "framework": "sveltekit"
+  }'
+
+### 

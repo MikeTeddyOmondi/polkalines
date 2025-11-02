@@ -32,7 +32,9 @@
 
 			// Use the updated pipeline's id for logs
 			const logsResponse = await getPipelineLogs(updatedPipeline.id);
-			logs = [...logs, logsResponse.logs];
+			logsResponse.logs === "" 
+				? logs = []
+				: logs = [...logs, logsResponse.logs];
 
 			if (updatedPipeline.status === 'success' || updatedPipeline.status === 'failed') {
 				clearInterval(intervalId);

@@ -18,7 +18,7 @@ export async function buildInkContract(
   // Use Parity's contracts CI image with Rust + cargo-contract
   const container = client
     .container()
-    .from("paritytech/contracts-ci-linux:production")
+    .from("paritytech/contracts-ci-linux:latest")
     .withDirectory("/workspace", repo)
     .withWorkdir(`/workspace/${contractPath}`);
 
@@ -29,7 +29,7 @@ export async function buildInkContract(
   const artifactsDir = built.directory("./target/ink");
   const entries = await artifactsDir.entries();
 
-  log.info(`[Dagger] Build artifacts: ${entries}`);
+  log.info(`[Dagger] Build artifacts: ${entries.join(", ")}`);
 
   return {
     container: built,
